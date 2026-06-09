@@ -1,0 +1,27 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.data.slug || post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const desc = post.data.description || post.body.replace(/[#*_>`\[\]()]/g, '').slice(0, 155);
+---
+<Base title={`${post.data.title} | Java Mbako`} description={desc} image={post.data.image}>
+  <article class="article">
+    <header class="article-header">
+      <p class="eyebrow">{post.data.categories?.join(' • ')}</p>
+      <h1>{post.data.title}</h1>
+      <time>{post.data.date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</time>
+      {post.data.image && <img class="featured" src={post.data.image} alt={post.data.title} loading="eager" />}
+    </header>
+    <Content />
+  </article>
+</Base>

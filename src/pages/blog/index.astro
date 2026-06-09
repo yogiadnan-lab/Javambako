@@ -1,0 +1,21 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+const posts = (await getCollection('blog'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const base = import.meta.env.BASE_URL;
+---
+<Base title="Blog Java Mbako" description="Daftar artikel Java Mbako.">
+  <h1>Blog Java Mbako</h1>
+  <div class="post-list">
+    {posts.map((post) => (
+      <article class="post-item">
+        <div>
+          <time>{post.data.date.toLocaleDateString('id-ID')}</time>
+          <h2><a href={`${base}blog/${post.data.slug || post.slug}/`}>{post.data.title}</a></h2>
+          {post.data.description && <p>{post.data.description}</p>}
+        </div>
+      </article>
+    ))}
+  </div>
+</Base>

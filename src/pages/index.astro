@@ -1,0 +1,31 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+const posts = (await getCollection('blog'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 9);
+const base = import.meta.env.BASE_URL;
+---
+<Base title="Java Mbako - Khusus Jual Mbako Kualitas Tinggi" description="Artikel dan informasi seputar tembakau, supplier, bisnis, dan produk Java Mbako.">
+  <section class="hero">
+    <p class="eyebrow">Khusus Jual Mbako Kualitas Tinggi</p>
+    <h1>Java Mbako</h1>
+    <p>Website statis berbasis Astro yang cepat, ringan, dan siap deploy ke GitHub Pages.</p>
+    <a class="button" href={`${base}blog/`}>Lihat Artikel</a>
+  </section>
+
+  <section>
+    <h2>Artikel Terbaru</h2>
+    <div class="grid">
+      {posts.map((post) => (
+        <article class="card">
+          {post.data.image && <img src={post.data.image} alt={post.data.title} loading="lazy" />}
+          <div class="card-body">
+            <time>{post.data.date.toLocaleDateString('id-ID')}</time>
+            <h3><a href={`${base}blog/${post.data.slug || post.slug}/`}>{post.data.title}</a></h3>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+</Base>

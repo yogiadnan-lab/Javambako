@@ -1,0 +1,35 @@
+---
+const { title = 'Java Mbako', description = 'Khusus Jual Mbako Kualitas Tinggi', image = '' } = Astro.props;
+const base = import.meta.env.BASE_URL;
+---
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {image && <meta property="og:image" content={image} />}
+    <link rel="icon" href={`${base}favicon.svg`} />
+    <link rel="stylesheet" href={`${base}styles/global.css`} />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href={base}>Java Mbako</a>
+        <nav>
+          <a href={base}>Beranda</a>
+          <a href={`${base}blog/`}>Blog</a>
+        </nav>
+      </div>
+    </header>
+    <main class="container">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div class="container">© {new Date().getFullYear()} Java Mbako</div>
+    </footer>
+  </body>
+</html>
