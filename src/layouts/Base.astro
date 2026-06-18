@@ -1,4 +1,6 @@
 ---
+import '../styles/global.css';
+
 const { title = 'Java Mbako', description = 'Khusus Jual Mbako Kualitas Tinggi', image = '' } = Astro.props;
 const base = import.meta.env.BASE_URL;
 ---
@@ -13,7 +15,6 @@ const base = import.meta.env.BASE_URL;
     <meta property="og:description" content={description} />
     {image && <meta property="og:image" content={image} />}
     <link rel="icon" href={`${base}favicon.svg`} />
-    <link rel="stylesheet" href={`${base}styles/global.css`} />
   </head>
   <body>
     <header class="site-header">
