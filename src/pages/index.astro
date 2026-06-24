@@ -1,31 +1,179 @@
 ---
 import Base from '../layouts/Base.astro';
 import { getCollection } from 'astro:content';
+
 const posts = (await getCollection('blog'))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, 9);
+  .slice(0, 6);
+
 const base = import.meta.env.BASE_URL;
+const img = (file) => `${base}Image/${file}`;
+const whatsappUrl = 'https://wa.me/6287776329910?text=Hi%20Java%20Mbako%20saya%20ingin%20bertanya';
+
+const heroImage = img('WhatsApp%20Image%202025-05-27%20at%2004.05.22_29582399.webp');
+const profileImage = img('WhatsApp%20Image%202025-05-27%20at%2004.05.18_dc8f50eb.webp');
+
+const products = [
+  {
+    name: 'Tembakau Rajangan Virginia FC Lombok',
+    image: img('WhatsApp%20Image%202025-05-27%20at%2004.05.17_2ae4b077.webp'),
+  },
+  {
+    name: 'Tembakau Rajangan Kasturi',
+    image: img('WhatsApp%20Image%202025-05-27%20at%2004.05.18_7b00cf92.webp'),
+  },
+  {
+    name: 'Tembakau Rajangan Pakpie Non Gula',
+    image: img('WhatsApp%20Image%202025-05-27%20at%2004.05.19_89754b41.webp'),
+  },
+  {
+    name: 'Tembakau Rajangan Pakpie Gula 5%',
+    image: img('WhatsApp%20Image%202025-05-27%20at%2004.05.19_ec7cf4ed.webp'),
+  },
+  {
+    name: 'Tembakau Rajangan Besuki',
+    image: img('WhatsApp%20Image%202025-05-27%20at%2004.05.20_78d9824f.webp'),
+  },
+  {
+    name: 'Tembakau Hang Jawa Jombang Loose Leaf',
+    image: img('WhatsApp%20Image%202025-05-27%20at%2004.05.16_34152d91.webp'),
+  },
+];
+
+const shipments = [
+  {
+    place: 'Pengiriman ke Malang',
+    image: img('WhatsApp%20Image%202025-05-27%20at%2004.05.20_c054b181.webp'),
+  },
+  {
+    place: 'Pengiriman ke Kudus',
+    image: img('WhatsApp%20Image%202025-05-27%20at%2004.05.23_82fece38.webp'),
+  },
+  {
+    place: 'Pengiriman ke Sidoarjo',
+    image: img('WhatsApp%20Image%202025-05-27%20at%2004.05.23_d793f725.webp'),
+  },
+];
+
+const orderSteps = [
+  'Kirim pesan melalui WhatsApp dan sampaikan kebutuhan produk.',
+  'Tim Java Mbako membantu mencocokkan jenis tembakau, volume, dan tujuan pengiriman.',
+  'Konfirmasi stok, jadwal, dan detail kerja sama sebelum produk disiapkan.',
+  'Produk dikirim sesuai kesepakatan untuk mitra, toko, dan kebutuhan bisnis.',
+];
 ---
-<Base title="Java Mbako - Khusus Jual Mbako Kualitas Tinggi" description="Artikel dan informasi seputar tembakau, supplier, bisnis, dan produk Java Mbako.">
-  <section class="hero">
-    <p class="eyebrow">Khusus Jual Mbako Kualitas Tinggi</p>
-    <h1>Java Mbako</h1>
-    <p>Website statis berbasis Astro yang cepat, ringan, dan siap deploy ke GitHub Pages.</p>
-    <a class="button" href={`${base}blog/`}>Lihat Artikel</a>
+
+<Base
+  title="Java Mbako | Produsen dan Supplier Tembakau Jawa"
+  description="Java Mbako menghadirkan tembakau rajangan dan loose leaf khas tanah Jawa untuk kebutuhan mitra, toko, dan industri."
+  image={heroImage}
+>
+  <section class="home-hero" id="home">
+    <div class="hero-panel">
+      <p class="eyebrow">Cita Rasa Khas Tanah Jawa</p>
+      <h1>Java Tobacco Profile</h1>
+      <p>
+        Java Mbako adalah wadah untuk menjaga rantai pasok tembakau lokal, dari daun pilihan hingga rajangan yang siap memenuhi kebutuhan mitra bisnis.
+      </p>
+      <div class="hero-actions">
+        <a class="button" href={whatsappUrl} target="_blank" rel="noopener noreferrer">Hubungi Kami</a>
+        <a class="button ghost" href="#produk">Lihat Produk</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <img src={heroImage} alt="Tembakau kering yang digantung di gudang Java Mbako" loading="eager" />
+    </div>
   </section>
 
-  <section>
-    <h2>Artikel Terbaru</h2>
-    <div class="grid">
+  <section class="profile-section" id="profile">
+    <div class="section-kicker">Company Profile</div>
+    <div class="profile-grid">
+      <div>
+        <p class="eyebrow">Tentang Java Mbako</p>
+        <h2>Gudang tembakau lokal untuk pasar nasional dan mitra ekspor.</h2>
+        <p>
+          Java Mbako berkomitmen meneruskan warisan ekosistem industri tembakau lokal agar dapat berkembang bersama di pasar nasional maupun ekspor. Fokus kami adalah tembakau berbentuk daun, rajangan, dan stok re-drying untuk kebutuhan bisnis.
+        </p>
+        <p>
+          Gudang utama berada di Jombang, Jawa Timur, dengan komunikasi penjualan yang melayani kebutuhan mitra dari berbagai wilayah. Produk tidak dikemas untuk penjualan eceran.
+        </p>
+        <div class="address-card">
+          <strong>Sales Office</strong>
+          <span>Jl. Radin Inten II No.93, Duren Sawit, Jakarta Timur 13440, Indonesia.</span>
+        </div>
+      </div>
+      <img src={profileImage} alt="Daun tembakau kering Java Mbako" loading="lazy" />
+    </div>
+  </section>
+
+  <section class="product-section" id="produk">
+    <div class="section-heading centered">
+      <p class="eyebrow">Produk Java Mbako</p>
+      <h2>Pilihan tembakau untuk kebutuhan mitra.</h2>
+    </div>
+    <div class="product-grid">
+      {products.map((product) => (
+        <article class="product-card">
+          <img src={product.image} alt={product.name} loading="lazy" />
+          <div>
+            <h3>{product.name}</h3>
+            <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">Klik disini untuk bertanya</a>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="order-section" id="pemesanan">
+    <div>
+      <p class="eyebrow">Langkah Pemesanan</p>
+      <h2>Diskusi stok dan pengiriman dibuat langsung melalui WhatsApp.</h2>
+      <p>
+        Alur dibuat sederhana untuk pembeli grosir, reseller, toko, dan mitra yang membutuhkan kepastian jenis produk sebelum pengiriman.
+      </p>
+    </div>
+    <ol class="order-list">
+      {orderSteps.map((step) => <li>{step}</li>)}
+    </ol>
+  </section>
+
+  <section class="shipment-section">
+    <div class="section-heading centered">
+      <p class="eyebrow">Pengalaman Mitra Kami</p>
+      <h2>Pengiriman Java Mbako</h2>
+    </div>
+    <div class="shipment-grid">
+      {shipments.map((shipment) => (
+        <article class="shipment-card">
+          <img src={shipment.image} alt={shipment.place} loading="lazy" />
+          <h3>{shipment.place}</h3>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="blog-preview" id="informasi">
+    <div class="section-heading">
+      <p class="eyebrow">Informasi Seputar Tembakau</p>
+      <h2>Artikel & Blog</h2>
+      <a href={`${base}blog/`}>Lihat semua artikel</a>
+    </div>
+    <div class="article-grid">
       {posts.map((post) => (
-        <article class="card">
+        <article class="article-card">
           {post.data.image && <img src={post.data.image} alt={post.data.title} loading="lazy" />}
-          <div class="card-body">
+          <div>
             <time>{post.data.date.toLocaleDateString('id-ID')}</time>
             <h3><a href={`${base}blog/${post.data.slug || post.slug}/`}>{post.data.title}</a></h3>
           </div>
         </article>
       ))}
     </div>
+  </section>
+
+  <section class="contact-band">
+    <p class="eyebrow">Mulai Diskusi</p>
+    <h2>Butuh tembakau untuk toko, mitra, atau kebutuhan industri?</h2>
+    <a class="button" href={whatsappUrl} target="_blank" rel="noopener noreferrer">Klik disini untuk tanya-tanya dulu</a>
   </section>
 </Base>
