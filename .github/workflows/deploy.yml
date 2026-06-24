@@ -29,8 +29,8 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          SITE_URL: https://adnanyogi88-dev.github.io
-          BASE_PATH: /javambako
+          SITE_URL: https://yogiadnan-lab.github.io
+          BASE_PATH: /Javambako/
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
