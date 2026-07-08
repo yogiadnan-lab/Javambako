@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { getCollection, render } from 'astro:content';
+import { getArticleImage } from '../../articleImages';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -13,15 +14,18 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content } = await render(post);
 const desc = post.data.description || post.body.replace(/[#*_>`\[\]()]/g, '').slice(0, 155);
+const image = getArticleImage(post);
 ---
-<Base title={`${post.data.title} | Java Mbako`} description={desc} image={post.data.image}>
+<Base title={`${post.data.title} | Java Mbako`} description={desc} image={image}>
   <article class="article">
     <header class="article-header">
       <p class="eyebrow">{post.data.categories?.join(' • ')}</p>
       <h1>{post.data.title}</h1>
       <time>{post.data.date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</time>
-      {post.data.image && <img class="featured" src={post.data.image} alt={post.data.title} loading="eager" />}
+      <img class="featured" src={image} alt={post.data.title} loading="eager" />
     </header>
-    <Content />
+    <div class="article-content">
+      <Content />
+    </div>
   </article>
 </Base>
