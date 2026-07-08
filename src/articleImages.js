@@ -45,6 +45,10 @@ function stableIndex(value, length) {
 }
 
 export function getArticleImage(post) {
+  if (post?.data?.image?.startsWith('/Image/')) {
+    return post.data.image;
+  }
+
   const slug = post?.data?.slug || post?.slug || '';
   const title = post?.data?.title || '';
   const key = `${slug} ${title}`.toLowerCase();
