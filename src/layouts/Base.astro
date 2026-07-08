@@ -27,6 +27,75 @@ const logo = `${base}logo.webp`;
       gtag('js', new Date());
       gtag('config', 'G-S85WD8K7QJ');
     </script>
+    <script is:inline>
+      (function () {
+        function isWhatsAppLink(url) {
+          return url.includes('wa.me') ||
+            url.includes('api.whatsapp.com') ||
+            url.includes('whatsapp.com/send');
+        }
+
+        function buildWhatsAppUrl(originalUrl, message) {
+          try {
+            var url = new URL(originalUrl, window.location.origin);
+
+            if (
+              url.hostname.includes('wa.me') ||
+              url.hostname.includes('whatsapp.com')
+            ) {
+              url.searchParams.set('text', message);
+              return url.toString();
+            }
+
+            return originalUrl;
+          } catch (e) {
+            return originalUrl;
+          }
+        }
+
+        function setupWhatsAppTracking() {
+          var links = document.querySelectorAll('a[href]');
+          var pageTitle = document.title || '';
+          var pageUrl = window.location.href;
+          var message =
+            'Halo JavaTobacco, saya ingin bertanya tentang produk JavaTobacco. Saya datang dari halaman: ' +
+            pageTitle +
+            ' - ' +
+            pageUrl;
+
+          links.forEach(function (link) {
+            var href = link.getAttribute('href') || '';
+
+            if (!isWhatsAppLink(href)) return;
+
+            var finalUrl = buildWhatsAppUrl(link.href, message);
+
+            link.setAttribute('href', finalUrl);
+            link.setAttribute('target', '_blank');
+            link.setAttribute('rel', 'noopener noreferrer');
+            link.setAttribute('data-track', 'whatsapp');
+
+            link.addEventListener('click', function () {
+              window.dataLayer = window.dataLayer || [];
+              window.dataLayer.push({
+                event: 'whatsapp_click',
+                source_page_url: window.location.href,
+                source_page_path: window.location.pathname,
+                source_page_title: document.title,
+                whatsapp_url: link.href,
+                button_text: (link.innerText || link.getAttribute('aria-label') || 'WhatsApp CTA').trim()
+              });
+            });
+          });
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', setupWhatsAppTracking);
+        } else {
+          setupWhatsAppTracking();
+        }
+      })();
+    </script>
   </head>
   <body>
     <header class="site-header">
