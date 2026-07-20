@@ -4,7 +4,7 @@ import { getCollection, render } from 'astro:content';
 import { getArticleImage } from '../../articleImages';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog');
+  const posts = await getCollection('blog', ({ data }) => data.status === 'published');
   return posts.map((post) => ({
     params: { slug: post.data.slug || post.slug },
     props: { post },
@@ -15,11 +15,64 @@ const { post } = Astro.props;
 const { Content } = await render(post);
 const desc = post.data.description || post.body.replace(/[#*_>`\[\]()]/g, '').slice(0, 155);
 const image = getArticleImage(post);
+const site = Astro.site || new URL('https://javatobacco.com');
+const postUrl = new URL(`/blog/${post.data.slug || post.slug}/`, site).href;
+const blogUrl = new URL('/blog/', site).href;
+const allPosts = (await getCollection('blog', ({ data }) => data.status === 'published'))
+  .filter((item) => item.id !== post.id);
+const categories = post.data.categories?.length ? post.data.categories : ['Tembakau'];
+const stopWords = new Set(['tembakau', 'tobacco', 'java', 'javatobacco', 'panduan', 'lengkap', 'bisnis', 'peluang', 'indonesia', 'untuk', 'dari', 'dan', 'yang', 'dengan', 'cara', 'produk']);
+const terms = (value) => new Set(String(value || '').toLocaleLowerCase('id-ID')
+  .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  .split(/[^a-z0-9]+/)
+  .filter((term) => term.length > 3 && !stopWords.has(term)));
+const sourceTerms = terms(`${post.data.title} ${(post.data.tags || []).join(' ')}`);
+const sourceTags = new Set((post.data.tags || []).map((tag) => tag.toLocaleLowerCase('id-ID')));
+const related = allPosts
+  .map((item) => {
+    const itemTerms = terms(`${item.data.title} ${(item.data.tags || []).join(' ')}`);
+    const termOverlap = [...sourceTerms].filter((term) => itemTerms.has(term)).length;
+    const tagOverlap = (item.data.tags || []).filter((tag) => sourceTags.has(tag.toLocaleLowerCase('id-ID'))).length;
+    const categoryOverlap = item.data.categories?.some((category) => categories.includes(category)) ? 1 : 0;
+    return { item, relevance: (tagOverlap * 10) + (termOverlap * 3) + categoryOverlap };
+  })
+  // A shared category alone is too broad; require a matching subject term or tag.
+  .filter(({ relevance }) => relevance > 1)
+  .sort((a, b) => b.relevance - a.relevance || b.item.data.date.valueOf() - a.item.data.date.valueOf())
+  .slice(0, 3);
+const categorySlug = (value) => value.toLocaleLowerCase('id-ID')
+  .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  .replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: post.data.title,
+  description: desc,
+  image: new URL(image, site).href,
+  datePublished: post.data.date.toISOString(),
+  dateModified: (post.data.updated || post.data.date).toISOString(),
+  inLanguage: post.data.lang,
+  mainEntityOfPage: postUrl,
+  author: { '@type': 'Person', name: post.data.author || 'Java Mbako' },
+  publisher: { '@type': 'Organization', name: 'Java Mbako', url: site.href },
+};
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Beranda', item: site.href },
+    { '@type': 'ListItem', position: 2, name: 'Blog', item: blogUrl },
+    { '@type': 'ListItem', position: 3, name: post.data.title, item: postUrl },
+  ],
+};
 ---
-<Base title={`${post.data.title} | Java Mbako`} description={desc} image={image}>
+<Base title={`${post.data.title} | Java Mbako`} description={desc} image={image} lang={post.data.lang} structuredData={[articleSchema, breadcrumbSchema]}>
   <article class="article">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Beranda</a><span aria-hidden="true">/</span><a href="/blog/">Blog</a><span aria-hidden="true">/</span><span aria-current="page">{post.data.title}</span>
+    </nav>
     <header class="article-header">
-      <p class="eyebrow">{post.data.categories?.join(' • ')}</p>
+      {categories.length > 0 && <p class="eyebrow">{categories.map((category, index) => <><a href={`/blog/kategori/${categorySlug(category)}/`}>{category}</a>{index < categories.length - 1 && ' • '}</>)}</p>}
       <h1>{post.data.title}</h1>
       <time>{post.data.date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</time>
       <img class="featured" src={image} alt={post.data.title} loading="eager" />
@@ -27,5 +80,11 @@ const image = getArticleImage(post);
     <div class="article-content">
       <Content />
     </div>
+    {related.length > 0 && (
+      <aside class="related-articles" aria-labelledby="related-title">
+        <h2 id="related-title">Artikel terkait</h2>
+        <ul>{related.map(({ item }) => <li><a href={`/blog/${item.data.slug || item.slug}/`}>{item.data.title}</a></li>)}</ul>
+      </aside>
+    )}
   </article>
 </Base>

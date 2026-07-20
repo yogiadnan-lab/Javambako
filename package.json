@@ -4,7 +4,9 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
+    "seo:redirects": "node scripts/generate-redirects.mjs",
     "build": "astro build",
+    "postbuild": "node scripts/generate-redirects.mjs dist/_redirects",
     "preview": "astro preview"
   },
   "dependencies": {

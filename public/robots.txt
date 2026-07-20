@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /preview/
+Disallow: /*?preview=
+Disallow: /*?s=
+
+Sitemap: https://javatobacco.com/sitemap-index.xml

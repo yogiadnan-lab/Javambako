@@ -1,23 +1,49 @@
 ---
 import '../styles/global.css';
 
-const { title = 'Java Mbako', description = 'Khusus Jual Mbako Kualitas Tinggi', image = '' } = Astro.props;
+const {
+  title = 'Java Mbako',
+  description = 'Khusus Jual Mbako Kualitas Tinggi',
+  image = '',
+  lang = 'id',
+  index = true,
+  canonical: canonicalProp,
+  alternates = [],
+  structuredData = [],
+} = Astro.props;
 const base = import.meta.env.BASE_URL;
-const whatsappUrl = 'https://wa.me/6287776329910?text=Hi%20Java%20Mbako%20saya%20ingin%20bertanya';
+const site = Astro.site || new URL('https://javatobacco.com');
+const canonical = canonicalProp || new URL(Astro.url.pathname, site).href;
+const absoluteImage = image ? new URL(image, site).href : '';
 const logo = `${base}logo.webp`;
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Java Mbako',
+  url: site.href,
+  logo: new URL(logo, site).href,
+};
+const whatsappUrl = 'https://wa.me/6287776329910?text=Hi%20Java%20Mbako%20saya%20ingin%20bertanya';
 ---
 <!doctype html>
-<html lang="id">
+<html lang={lang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="google-site-verification" content="Rtxs2RtrbkrCK3wvbQ8yPkCsaZAiK1CAwYItEkQ0zbQ" />
-<meta name="google-site-verification" content="Rtxs2RtrbkrCK3wvbQ8yPkCsaZAiK1CAwYItEkQ0zbQ" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta name="robots" content={index ? 'index, follow' : 'noindex, nofollow'} />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang={lang} href={canonical} />
+    <link rel="alternate" hreflang="x-default" href={canonical} />
+    {alternates.map((alternate) => <link rel="alternate" hreflang={alternate.lang} href={alternate.href} />)}
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    {image && <meta property="og:image" content={image} />}
+    <meta property="og:url" content={canonical} />
+    <meta property="og:type" content="website" />
+    {absoluteImage && <meta property="og:image" content={absoluteImage} />}
+    {[organizationSchema, ...structuredData].map((data) => <script type="application/ld+json" set:html={JSON.stringify(data)} />)}
     <link rel="icon" type="image/webp" href={logo} />
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-S85WD8K7QJ"></script>

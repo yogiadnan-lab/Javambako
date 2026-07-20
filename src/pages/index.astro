@@ -3,8 +3,9 @@ import Base from '../layouts/Base.astro';
 import { getCollection } from 'astro:content';
 import { getArticleImage } from '../articleImages';
 
-const posts = (await getCollection('blog'))
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const posts = (await getCollection('blog', ({ data }) => data.status === 'published'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 12);
 
 const base = import.meta.env.BASE_URL;
 const img = (file) => `${base}Image/${file}`;
