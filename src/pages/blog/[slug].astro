@@ -13,6 +13,12 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const { Content } = await render(post);
+const pillarSlug = 'jual-tembakau-grosir-indonesia-untuk-mitra-usaha';
+const currentSlug = post.data.slug || post.slug;
+const commercialTopic = /\b(grosir|supplier|pemasok|distributor|reseller|pengadaan|pasokan|partai besar|mitra usaha)\b/i;
+const shouldLinkToGrosirPillar = currentSlug !== pillarSlug
+  && !post.body.includes(pillarSlug)
+  && commercialTopic.test(`${post.data.title} ${(post.data.tags || []).join(' ')}`);
 const desc = post.data.description || post.body.replace(/[#*_>`\[\]()]/g, '').slice(0, 155);
 const image = getArticleImage(post);
 const site = Astro.site || new URL('https://javatobacco.com');
@@ -79,6 +85,11 @@ const breadcrumbSchema = {
     </header>
     <div class="article-content">
       <Content />
+      {shouldLinkToGrosirPillar && (
+        <p class="pillar-link">
+          Sedang merencanakan pembelian untuk usaha? Pelajari cara menilai grade, batch, MOQ, sampel, penyimpanan, dan pengiriman dalam <a href={`/blog/${pillarSlug}/`}>panduan jual tembakau grosir Indonesia</a>.
+        </p>
+      )}
     </div>
     {related.length > 0 && (
       <aside class="related-articles" aria-labelledby="related-title">
