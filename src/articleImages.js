@@ -45,7 +45,7 @@ function stableIndex(value, length) {
 }
 
 export function getArticleImage(post) {
-  if (post?.data?.image?.startsWith('/Image/')) {
+  if (post?.data?.image?.startsWith('/')) {
     return post.data.image;
   }
 
